@@ -1,11 +1,20 @@
-import './App.css'
+import React from 'react';
+import './App.css';
+import Navbar from './components/Navbar/Navbar';
+import profilePic from './assets/react.svg';
 
-function App() {
+const userList = [
+  { id: 1, name: 'Jane Doe', image: profilePic },
+  { id: 2, name: 'John Smith', image: profilePic },
+  { id: 3, name: 'Alice Johnson', image: profilePic }
+];
+
+const App: React.FC = () => {
   return (
-    <>
-      <h1>StudyBuddy</h1>
-    </>
-  )
-}
+      <div>
+          <Navbar userImage={profilePic} userName="John Doe" userList={userList} />
+      </div>
+  );
+};
 
-export default App
+export default App;
