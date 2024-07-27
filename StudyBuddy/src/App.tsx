@@ -1,12 +1,11 @@
 import React from 'react';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
-import ChatPage from './pages/ChatPage';
-import UsersPage from './pages/UsersPage';
 import Navbar from './components/Navbar/Navbar';
+import MainLayout from './components/MainLayout/MainLayout';
 import profilePic from './assets/react.svg';
 
 const userList = [
@@ -16,23 +15,35 @@ const userList = [
 ];
 
 const App: React.FC = () => {
+  const location = useLocation();
+
+  const showNavbar = location.pathname !== '/signup' && location.pathname !== '/login';
+
   return (
     <AuthProvider>
-      <Router>
-        <div>
-          <Navbar userImage={profilePic} userName="John Doe" userList={userList} />
-          <div className="content">
-            <Routes>
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/chat/:chatId" element={<ChatPage />} />
-              <Route path="/users" element={<UsersPage />} />
-            </Routes>
-          </div>
+      <div className="container">
+        {showNavbar && <Navbar userImage={profilePic} userName="John Doe" userList={userList} />}
+        <div className="main-content">
+          <Routes>
+            {showNavbar ? (
+              <Route path="/*" element={<MainLayout />} />
+            ) : (
+              <>
+                <Route path="/signup" element={<SignUpPage />} />
+                <Route path="/login" element={<LoginPage />} />
+              </>
+            )}
+          </Routes>
         </div>
-      </Router>
+      </div>
     </AuthProvider>
   );
 }
 
-export default App;
+const AppWithRouter: React.FC = () => (
+  <Router>
+    <App />
+  </Router>
+);
+
+export default AppWithRouter;
