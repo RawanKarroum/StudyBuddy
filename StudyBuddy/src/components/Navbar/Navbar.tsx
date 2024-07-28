@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import './Navbar.css';
 
 interface User {
-    id: number;
+    id: string;
     name: string;
     image: string;
 }
