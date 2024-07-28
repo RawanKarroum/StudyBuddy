@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { fetchUserDetails, fetchUserInfo } from './services/AuthService';
 import './App.css';
 import UsersPage from './pages/UsersPage';
 import ChatPage from './pages/ChatPage';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const App = () => {
   const location = useLocation();
@@ -43,30 +44,30 @@ const App = () => {
   }, [currentUser]);
 
   return (
-<div className="container">
-  {showNavbar && (
-    <Navbar
-      userImage={profilePic}
-      userName={displayName}
-      userList={userList}
-    />
-  )}
-  <div className={showNavbar ? 'main-content' : 'full-width'}>
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/login" element={<LoginPage />} />
+    <div className="container">
       {showNavbar && (
-        <Route path="/*" element={<MainLayout />}>
-          <>
-            <Route path="users" element={<UsersPage />} />
-            <Route path="chat/:chatId" element={<ChatPage />} />
-          </>
-        </Route>
+        <Navbar
+          userImage={profilePic}
+          userName={displayName}
+          userList={userList}
+        />
       )}
-    </Routes>
-  </div>
-</div>
+      <div className={showNavbar ? 'main-content' : 'full-width'}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          {showNavbar && (
+            <Route path="/*" element={<MainLayout />}>
+              <>
+                <Route path="users" element={<UsersPage />} />
+                <Route path="chat/:chatId" element={<ChatPage />} />
+              </>
+            </Route>
+          )}
+        </Routes>
+      </div>
+    </div>
   );
 };
 

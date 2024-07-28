@@ -1,0 +1,76 @@
+/* SearchBar.css */
+.search-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #009688;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+.search-button:hover {
+    background-color: #007bbf;
+}
+
+.modal {
+    position: absolute;
+    background: #2e2e2e;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #444444;
+}
+
+.overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-title {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.form-group label {
+    color: #ffffff;
+}
+
+.form-group input {
+    padding: 10px;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    background-color: #3e3e3e;
+    color: #ffffff;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.form-actions button {
+    padding: 10px 20px;
+    background-color: #009688;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-actions button:hover {
+    background-color: #007bbf;
+}

@@ -1,8 +1,139 @@
+/* MainLayout.css */
 .main-content {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
   height: 100%;
   box-sizing: border-box;
+  position: relative;
+}
 
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.page-title {
+  font-size: 2.5em;
+  color: #009688;
+  margin: 0; /* Reset margin to align it properly */
+}
+
+.users-page .users-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.users-page .user-card {
+  background-color: #2e2e2e;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #444444;
+  cursor: default; /* Remove cursor pointer from the whole card */
+  transition: background-color 0.3s ease;
+  position: relative;
+}
+
+.users-page .user-card:hover {
+  background-color: #3e3e3e;
+}
+
+.users-page .user-profile {
+  display: flex;
+  align-items: center; /* Align items in the center */
+  width: 100%;
+}
+
+.users-page .user-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-right: 20px;
+  border: 2px solid #009688;
+  object-fit: cover;
+}
+
+.users-page .user-info {
+  display: flex;
+  flex-direction: column; /* Ensure elements stack vertically */
+  align-items: flex-start; /* Align items to the start */
+  flex-grow: 1; /* Allow it to take up remaining space */
+}
+
+.users-page .user-info h2 {
+  margin: 0 0 10px;
+  color: #ffffff;
+}
+
+.users-page .user-info p {
+  margin: 5px 0;
+  color: #ffffff;
+}
+
+.users-page .user-info p strong {
+  color: #009688;
+}
+
+.add-friend-button {
+  position: absolute;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #009688;
+  color: #ffffff;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-friend-button:hover {
+  background-color: #007bbf;
+}
+
+.add-friend-button i {
+  font-size: 16px; /* Adjust the icon size */
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.spinner {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #009688;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
 }
