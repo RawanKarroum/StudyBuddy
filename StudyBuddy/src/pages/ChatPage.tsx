@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams, useLocation, Navigate } from 'react-router-dom';
+import { useParams, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { collection, addDoc, query, onSnapshot, orderBy, where } from 'firebase/firestore';
 import { db } from '../config/Firebase'; 
 import { useAuth } from '../context/AuthContext'; 
@@ -21,6 +21,7 @@ const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (currentUser && chatId) {
@@ -76,8 +77,15 @@ const ChatPage: React.FC = () => {
     return <div>Error: Friend not found.</div>;
   }
 
+  const handleBackToUsers = () => {
+    navigate('/users');
+  };
+
   return (
     <div className="chat-container">
+      <button className="back-button" onClick={handleBackToUsers}>
+        X
+      </button>
       <div className="profile-header">
         <img src={friend.image} alt="User" className="profile-picture" />
         <div className="profile-details">
