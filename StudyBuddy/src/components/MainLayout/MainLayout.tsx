@@ -4,7 +4,7 @@ import ChatPage from '../../pages/ChatPage';
 import UsersPage from '../../pages/UsersPage';
 import './MainLayout.css';
 
-const MainLayout: React.FC = () => {
+const MainLayout = () => {
   return (
     <div className="main-content">
       <Routes>

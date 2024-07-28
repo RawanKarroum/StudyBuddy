@@ -5,7 +5,7 @@ import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import Navbar from './components/Navbar/Navbar';
-// import MainLayout from './components/MainLayout/MainLayout';
+import MainLayout from './components/MainLayout/MainLayout';
 import profilePic from './assets/react.svg';
 import './App.css';
 import UsersPage from './pages/UsersPage';
@@ -31,12 +31,12 @@ const App = () => {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/login" element={<LoginPage />} />
             {showNavbar && (
-              // <Route path="/*" element={<MainLayout />}>
+              <Route path="/*" element={<MainLayout />}>
                 <>
                 <Route path="users" element={<UsersPage />} />
                 <Route path="chat/:chatId" element={<ChatPage />} />
                 </>
-              // </Route>
+              </Route>
             )}
           </Routes>
         </div>

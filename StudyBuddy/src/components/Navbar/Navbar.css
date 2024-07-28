@@ -1,5 +1,5 @@
 .sidebar {
-    width: 20%; /* Adjust width as needed */
+    width: 20%;
     background-color: #2c3e50;
     color: #ecf0f1;
     display: flex;
@@ -11,7 +11,7 @@
     left: 0;
     bottom: 0;
     z-index: 1000;
-    overflow-y: auto; /* Add scrolling for the sidebar if content overflows */
+    overflow-y: auto;
 }
 
 .user-info {
