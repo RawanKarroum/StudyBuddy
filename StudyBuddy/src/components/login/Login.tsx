@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext'; 
 import './Login.css'; 
 import { handleError } from '../../utils/errorHandler';
@@ -10,7 +10,7 @@ const Login = () => {
     const { logIn } = useAuth();
     const navigate = useNavigate();
     
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
         try {
             await logIn(email, password);

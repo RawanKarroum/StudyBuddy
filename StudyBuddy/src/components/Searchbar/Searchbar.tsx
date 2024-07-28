@@ -37,7 +37,6 @@ const SearchBar: React.FC<{ onSearchResults: (results: User[]) => void, currentU
             if (buttonRef.current) {
                 const rect = buttonRef.current.getBoundingClientRect();
                 const modalWidth = 500; // Approximate width of the modal
-                const modalHeight = 400; // Approximate height of the modal
                 const offsetTop = rect.bottom + window.scrollY;
                 const offsetLeft = Math.min(
                     rect.left + window.scrollX,

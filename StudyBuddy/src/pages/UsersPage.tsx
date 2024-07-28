@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, query, where, doc, updateDoc, arrayUnion, FirestoreError } from 'firebase/firestore';
 import { db } from '../config/Firebase'; 
 import { useAuth } from '../context/AuthContext'; 
-import { useNavigate } from 'react-router-dom';
 import SearchBar from '../components/Searchbar/Searchbar';
 
 interface User {
@@ -22,7 +21,6 @@ const UsersPage: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (currentUser) {
@@ -108,13 +106,9 @@ const UsersPage: React.FC = () => {
         }
     };
 
-    const generateChatId = (user1: string, user2: string): string => {
-        return [user1, user2].sort().join('_');
-    };
 
     const addFriendAndStartChat = async (user: User) => {
         if (currentUser) {
-            const chatId = generateChatId(currentUser.uid, user.uid);
 
             const userRef = doc(db, 'Users', currentUser.uid);
             const friendRef = doc(db, 'Users', user.uid);
@@ -126,7 +120,6 @@ const UsersPage: React.FC = () => {
                 friends: arrayUnion(currentUser.uid),
             });
 
-            navigate(`/chat/${chatId}`);
         }
     };
 
