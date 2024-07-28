@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './UserProfileModal.css';
+import { getProfilePicUrl } from '../../services/AuthService';
 
 interface UserProfileModalProps {
     onClose: () => void;
@@ -16,6 +17,19 @@ interface UserProfileModalProps {
 }
 
 const UserProfileModal: React.FC<UserProfileModalProps> = ({ onClose, userInfo }) => {
+    const [profilePic, setProfilePic] = useState<string>('default.jpg');
+
+    useEffect(() => {
+        const fetchProfilePic = async () => {
+            if (userInfo?.profilePicUrl) {
+                const profilePicUrl = await getProfilePicUrl(userInfo.profilePicUrl);
+                setProfilePic(profilePicUrl);
+            }
+        };
+
+        fetchProfilePic();
+    }, [userInfo]);
+
     if (!userInfo) return null;
 
     const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -28,7 +42,7 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ onClose, userInfo }
                 <button className="close-button" onClick={onClose}>Close</button>
                 <h2>User Profile</h2>
                 <img
-                    src={userInfo.profilePicUrl}
+                    src={profilePic}
                     alt="Profile"
                     className="profile-image"
                     onError={handleError}

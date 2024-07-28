@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Navbar.css';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
-import { fetchUserInfo } from '../../services/AuthService';
+import { fetchUserInfo, fetchUserDetails } from '../../services/AuthService';
 import { useAuth } from '../../context/AuthContext';
 
 interface User {
@@ -23,7 +23,6 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
     const { currentUser } = useAuth();
 
     const handleOpenModal = async () => {
-        // Fetch user info dynamically
         const info = await fetchUserInfo(currentUser?.uid || '');
         setUserInfo(info);
         setIsModalOpen(true);
@@ -63,6 +62,10 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
             }
         };
     }, []);
+
+    useEffect(() => {
+        console.log("User list in Navbar:", userList);
+    }, [userList]);
 
     return (
         <div className="container">

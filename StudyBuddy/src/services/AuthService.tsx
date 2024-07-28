@@ -16,16 +16,11 @@ interface AdditionalUserInfo {
   friends?: string[];
 }
 
-export const getProfilePicUrl = async (filePath: string) => {
-  try {
-    const fileRef = ref(storage, filePath);
-    const url = await getDownloadURL(fileRef);
-    return url;
-  } catch (error) {
-    console.error("Error getting download URL:", error);
-    return 'default.jpg'; 
-  }
-};
+interface UserDetails {
+  id: string;
+  name: string;
+  image: string;
+}
 
 export const signUp = async (email: string, password: string, additionalInfo: AdditionalUserInfo) => {
   try {
@@ -33,7 +28,7 @@ export const signUp = async (email: string, password: string, additionalInfo: Ad
     const user = userCredential.user;
 
     // Default profile picture URL
-    let profilePicUrl = await getProfilePicUrl('default.jpg');
+    let profilePicUrl = 'default.jpg';
 
     // Upload profile picture if provided
     if (additionalInfo.profilePic) {
@@ -41,8 +36,6 @@ export const signUp = async (email: string, password: string, additionalInfo: Ad
       await uploadBytes(profilePicRef, additionalInfo.profilePic);
       profilePicUrl = await getDownloadURL(profilePicRef);
     }
-
-    console.log('Profile Pic URL:', profilePicUrl);
 
     // Save user information to Firestore
     await setDoc(doc(db, 'Users', user.uid), {
@@ -88,12 +81,17 @@ export const fetchUserInfo = async (uid: string): Promise<AdditionalUserInfo | n
   }
 };
 
-export const fetchUserDetails = async (uid: string): Promise<{ id: string, name: string, image: string } | null> => {
+export const fetchUserDetails = async (uid: string): Promise<UserDetails | null> => {
   try {
     const userDoc = await getDoc(doc(db, 'Users', uid));
     if (userDoc.exists()) {
       const data = userDoc.data() as AdditionalUserInfo;
-      return { id: uid, name: `${data.firstName} ${data.lastName}`, image: data.profilePicUrl || 'default.jpg' };
+      const profilePicUrl = data.profilePicUrl ? data.profilePicUrl : await getProfilePicUrl('default.jpg');
+      return {
+        id: uid,
+        name: `${data.firstName} ${data.lastName}`,
+        image: profilePicUrl,
+      };
     } else {
       return null;
     }
@@ -103,6 +101,16 @@ export const fetchUserDetails = async (uid: string): Promise<{ id: string, name:
   }
 };
 
+export const getProfilePicUrl = async (filePath: string) => {
+  try {
+    const fileRef = ref(storage, filePath);
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (error) {
+    console.error("Error getting download URL:", error);
+    return 'default.jpg'; // Fallback to a local default image if needed
+  }
+};
 
 export const logOut = async () => {
   try {
