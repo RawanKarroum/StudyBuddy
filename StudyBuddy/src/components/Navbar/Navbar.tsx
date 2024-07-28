@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Navbar.css';
-import '../UserProfileModal/UserProfileModal'
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
 import { fetchUserInfo } from '../../services/AuthService';
 import { useAuth } from '../../context/AuthContext';
@@ -34,6 +33,10 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         setIsModalOpen(false);
     };
 
+    const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+        event.currentTarget.src = 'default.jpg'; // Fallback image in case of an error
+    };
+
     useEffect(() => {
         const handleScroll = () => {
             if (scrollableBoxRef.current) {
@@ -65,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         <div className="container">
             <nav className="sidebar">
                 <div className="user-info">
-                    <img src={userImage} alt="User" className="user-image" />
+                    <img src={userImage} alt="User" className="user-image" onError={handleError} />
                     <div className="user-details">
                         <span className="user-name">{userName}</span>
                         <button className="view-profile" onClick={handleOpenModal}>View Profile</button>
@@ -75,7 +78,7 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
                     <div className="user-list-container">
                         {userList.map(user => (
                             <a href={`/profile/${user.id}`} className="user-list-item" key={user.id}>
-                                <img src={user.image} alt={user.name} className="user-list-image" />
+                                <img src={user.image} alt={user.name} className="user-list-image" onError={handleError} />
                                 <span className="user-list-name">{user.name}</span>
                             </a>
                         ))}
