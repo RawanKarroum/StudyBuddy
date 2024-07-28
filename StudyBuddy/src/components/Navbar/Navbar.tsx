@@ -1,13 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
-import { fetchUserInfo, fetchUserDetails } from '../../services/AuthService';
+import { fetchUserInfo, fetchUserDetails, logOut } from '../../services/AuthService';
 import { useAuth } from '../../context/AuthContext';
 
 interface User {
     id: string;
     name: string;
     image: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    university?: string;
+    courses?: string[];
+    major?: string;
+    year?: string;
 }
 
 interface NavbarProps {
@@ -21,6 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
     const [userInfo, setUserInfo] = useState<any>(null);
     const scrollableBoxRef = useRef<HTMLDivElement>(null);
     const { currentUser } = useAuth();
+    const navigate = useNavigate();
 
     const handleOpenModal = async () => {
         const info = await fetchUserInfo(currentUser?.uid || '');
@@ -32,8 +41,34 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         setIsModalOpen(false);
     };
 
+
+    const generateChatId = (user1: string, user2: string): string => {
+        return [user1, user2].sort().join('_');
+    };
+
+    const startChat = async (friend: User) => {
+        if (currentUser) {
+            const chatId = generateChatId(currentUser.uid, friend.id);
+            const friendDetails = await fetchUserDetails(friend.id);
+            
+            if (friendDetails) {
+                console.log(`Navigating to chat with ID: ${chatId}`);
+                navigate(`/chat/${chatId}`, { state: { friend: friendDetails } });
+            } else {
+                console.error("Friend details not found");
+            }
+        }
+    };
+
+    const handleSignOut = async () => {
+        await logOut();
+        navigate('/');
+        console.log(currentUser?.displayName);
+    };
+
+
     const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        event.currentTarget.src = 'default.jpg'; // Fallback image in case of an error
+        event.currentTarget.src = 'default.jpg';
     };
 
     useEffect(() => {
@@ -80,14 +115,20 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
                 <div className="scrollable-box hide-scrollbar" ref={scrollableBoxRef}>
                     <div className="user-list-container">
                         {userList.map(user => (
-                            <a href={`/profile/${user.id}`} className="user-list-item" key={user.id}>
-                                <img src={user.image} alt={user.name} className="user-list-image" onError={handleError} />
-                                <span className="user-list-name">{user.name}</span>
-                            </a>
+
+                            <div
+                                className="user-list-item"
+                                key={user.id}
+                                onClick={() => startChat(user)}
+                            >
+                                  <img src={user.image} alt={user.firstName} className="user-list-image" onError={handleError} />
+                                  <span className="user-list-name">{user.firstName + ' ' + user.lastName}</span>
+                            </div>
+
                         ))}
                     </div>
                 </div>
-                <button className="sign-out">Sign Out</button>
+                <button className="sign-out" onClick={handleSignOut}>Sign Out</button>
             </nav>
             {isModalOpen && <UserProfileModal userInfo={userInfo} onClose={handleCloseModal} />}
         </div>
