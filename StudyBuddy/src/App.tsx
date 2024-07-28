@@ -4,18 +4,22 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
+import LandingPage from './pages/LandingPage';
 import Navbar from './components/Navbar/Navbar';
 import MainLayout from './components/MainLayout/MainLayout';
 import profilePic from './assets/react.svg';
 import { fetchUserDetails, fetchUserInfo } from './services/AuthService';
+import './App.css';
+import UsersPage from './pages/UsersPage';
+import ChatPage from './pages/ChatPage';
 
-const App: React.FC = () => {
+const App = () => {
   const location = useLocation();
   const { currentUser } = useAuth();
   const [displayName, setDisplayName] = useState('Guest');
   const [userList, setUserList] = useState<{ id: string, name: string, image: string }[]>([]);
 
-  const showNavbar = location.pathname !== '/signup' && location.pathname !== '/login';
+  const showNavbar = location.pathname !== '/signup' && location.pathname !== '/login' && location.pathname !== '/';
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -39,31 +43,34 @@ const App: React.FC = () => {
   }, [currentUser]);
 
   return (
-    <div className="container">
+<div className="container">
+  {showNavbar && (
+    <Navbar
+      userImage={profilePic}
+      userName={displayName}
+      userList={userList}
+    />
+  )}
+  <div className={showNavbar ? 'main-content' : 'full-width'}>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/login" element={<LoginPage />} />
       {showNavbar && (
-        <Navbar
-          userImage={profilePic}
-          userName={displayName}
-          userList={userList}
-        />
+        <Route path="/*" element={<MainLayout />}>
+          <>
+            <Route path="users" element={<UsersPage />} />
+            <Route path="chat/:chatId" element={<ChatPage />} />
+          </>
+        </Route>
       )}
-      <div className="main-content">
-        <Routes>
-          {showNavbar ? (
-            <Route path="/*" element={<MainLayout />} />
-          ) : (
-            <>
-              <Route path="/signup" element={<SignUpPage />} />
-              <Route path="/login" element={<LoginPage />} />
-            </>
-          )}
-        </Routes>
-      </div>
-    </div>
+    </Routes>
+  </div>
+</div>
   );
 };
 
-const AppWithRouter: React.FC = () => (
+const AppWithRouter = () => (
   <Router>
     <AuthProvider>
       <App />

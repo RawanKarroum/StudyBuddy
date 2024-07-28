@@ -1,5 +1,8 @@
-.main-layout {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
+  margin-left: 20%;
+}
