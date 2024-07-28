@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext'; 
 import './Login.css'; 
+import { handleError } from '../../utils/errorHandler';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { logIn } = useAuth();
+    const navigate = useNavigate();
     
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await logIn(email, password);
-            alert('User logged in successfully!');
+            navigate('/users');
         } catch (error) {
-            alert('Error logging in: ', error.message);
+            handleError(error)
         }
     };
 

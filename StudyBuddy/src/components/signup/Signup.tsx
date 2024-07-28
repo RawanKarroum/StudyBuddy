@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext'; 
 import { handleError } from '../../utils/errorHandler';
 import './SignUp.css'; // Import the CSS file
+import { useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +15,7 @@ const SignUp: React.FC = () => {
   const [year, setYear] = useState('');
   const [profilePic, setProfilePic] = useState<File | null>(null);
   const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ const SignUp: React.FC = () => {
         year,
         profilePic,
       });
-      alert('User signed up successfully!');
+      navigate('/users');
     } catch (error) {
       alert(handleError(error).message);
     }
