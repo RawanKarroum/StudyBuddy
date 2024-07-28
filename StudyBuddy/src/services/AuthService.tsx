@@ -4,6 +4,18 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from "../config/Firebase";
 import { handleError } from "../utils/errorHandler";
 
+interface UserDetails {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  university: string;
+  courses: string[];
+  major: string;
+  year: string;
+  image: string;
+}
+
 interface AdditionalUserInfo {
   firstName: string;
   lastName: string;
@@ -88,18 +100,29 @@ export const fetchUserInfo = async (uid: string): Promise<AdditionalUserInfo | n
   }
 };
 
-export const fetchUserDetails = async (uid: string): Promise<{ id: string, name: string, image: string } | null> => {
+
+export const fetchUserDetails = async (uid: string): Promise<UserDetails | null> => {
   try {
-    const userDoc = await getDoc(doc(db, 'Users', uid));
-    if (userDoc.exists()) {
-      const data = userDoc.data() as AdditionalUserInfo;
-      return { id: uid, name: `${data.firstName} ${data.lastName}`, image: data.profilePicUrl || 'default.jpg' };
-    } else {
-      return null;
-    }
+      const userDoc = await getDoc(doc(db, 'Users', uid));
+      if (userDoc.exists()) {
+          const data = userDoc.data();
+          return {
+              id: uid,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              university: data.university,
+              courses: data.courses,
+              major: data.major,
+              year: data.year,
+              image: data.profilePicUrl || 'default.jpg'
+          };
+      } else {
+          return null;
+      }
   } catch (error) {
-    console.error("Error fetching user details:", error);
-    return null;
+      console.error("Error fetching user details:", error);
+      return null;
   }
 };
 

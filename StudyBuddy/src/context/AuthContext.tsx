@@ -15,6 +15,7 @@ interface AdditionalUserInfo {
 
 interface AuthContextType {
   currentUser: User | null;
+  setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   signUp: (email: string, password: string, additionalInfo: AdditionalUserInfo) => Promise<User | null>;
   logIn: (email: string, password: string) => Promise<User | null>;
   logOut: () => Promise<void>;
@@ -58,7 +59,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, signUp, logIn, logOut }}>
+    <AuthContext.Provider value={{ currentUser, setCurrentUser, signUp, logIn, logOut }}>
       {children}
     </AuthContext.Provider>
   );
