@@ -16,6 +16,18 @@ interface AdditionalUserInfo {
   friends?: string[];
 }
 
+interface UserDetails {
+  id: string;
+  image: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  university?: string;
+  courses?: string[];
+  major?: string;
+  year?: string;
+}
+
 export const signUp = async (email: string, password: string, additionalInfo: AdditionalUserInfo) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -75,21 +87,41 @@ export const fetchUserInfo = async (uid: string): Promise<AdditionalUserInfo | n
   }
 };
 
-export const fetchUserDetails = async (uid: string): Promise<{ id: string, name: string, image: string } | null> => {
+export const fetchUserDetails = async (uid: string): Promise<UserDetails | null> => {
   try {
-    const userDoc = await getDoc(doc(db, 'Users', uid));
-    if (userDoc.exists()) {
-      const data = userDoc.data() as AdditionalUserInfo;
-      return { id: uid, name: `${data.firstName} ${data.lastName}`, image: data.profilePicUrl || 'default.jpg' };
-    } else {
-      return null;
-    }
+      const userDoc = await getDoc(doc(db, 'Users', uid));
+      if (userDoc.exists()) {
+          const data = userDoc.data();
+          return {
+              id: uid,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              university: data.university,
+              courses: data.courses,
+              major: data.major,
+              year: data.year,
+              image: data.profilePicUrl || 'default.jpg'
+          };
+      } else {
+          return null;
+      }
   } catch (error) {
-    console.error("Error fetching user details:", error);
-    return null;
+      console.error("Error fetching user details:", error);
+      return null;
   }
 };
 
+export const getProfilePicUrl = async (filePath: string) => {
+  try {
+    const fileRef = ref(storage, filePath);
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (error) {
+    console.error("Error getting download URL:", error);
+    return 'default.jpg'; // Fallback to a local default image if needed
+  }
+};
 
 export const logOut = async () => {
   try {
