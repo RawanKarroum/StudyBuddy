@@ -1,5 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Navbar.css';
+import '../UserProfileModal/UserProfileModal'
+import UserProfileModal from '../UserProfileModal/UserProfileModal';
+import { fetchUserInfo } from '../../services/AuthService';
+import { useAuth } from '../../context/AuthContext';
 
 interface User {
     id: string;
@@ -14,7 +18,21 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [userInfo, setUserInfo] = useState<any>(null);
     const scrollableBoxRef = useRef<HTMLDivElement>(null);
+    const { currentUser } = useAuth();
+
+    const handleOpenModal = async () => {
+        // Fetch user info dynamically
+        const info = await fetchUserInfo(currentUser?.uid || '');
+        setUserInfo(info);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -50,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
                     <img src={userImage} alt="User" className="user-image" />
                     <div className="user-details">
                         <span className="user-name">{userName}</span>
-                        <span className="view-profile">View Profile</span>
+                        <button className="view-profile" onClick={handleOpenModal}>View Profile</button>
                     </div>
                 </div>
                 <div className="scrollable-box hide-scrollbar" ref={scrollableBoxRef}>
@@ -65,6 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
                 </div>
                 <button className="sign-out">Sign Out</button>
             </nav>
+            {isModalOpen && <UserProfileModal userInfo={userInfo} onClose={handleCloseModal} />}
         </div>
     );
 };
