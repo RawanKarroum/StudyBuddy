@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import UserProfileModal from '../UserProfileModal/UserProfileModal';
-import { fetchUserInfo, fetchUserDetails } from '../../services/AuthService';
+import { fetchUserInfo, fetchUserDetails, logOut } from '../../services/AuthService';
 import { useAuth } from '../../context/AuthContext';
 
 interface User {
@@ -57,6 +57,12 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         }
     };
 
+    const handleSignOut = async () => {
+        await logOut();
+        navigate('/');
+        console.log(currentUser?.displayName)
+    };
+
     useEffect(() => {
         const handleScroll = () => {
             if (scrollableBoxRef.current) {
@@ -102,13 +108,13 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
                                 key={user.id}
                                 onClick={() => startChat(user)}
                             >
-                                <img src={user.image} alt={user.name} className="user-list-image" />
-                                <span className="user-list-name">{user.name}</span>
+                                <img src={user.image} alt={user.firstName} className="user-list-image" />
+                                <span className="user-list-name">{user.firstName + ' ' + user.lastName}</span>
                             </div>
                         ))}
                     </div>
                 </div>
-                <button className="sign-out">Sign Out</button>
+                <button className="sign-out" onClick={handleSignOut}>Sign Out</button>
             </nav>
             {isModalOpen && <UserProfileModal userInfo={userInfo} onClose={handleCloseModal} />}
         </div>
