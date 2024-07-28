@@ -32,7 +32,6 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
     const navigate = useNavigate();
 
     const handleOpenModal = async () => {
-        // Fetch user info dynamically
         const info = await fetchUserInfo(currentUser?.uid || '');
         setUserInfo(info);
         setIsModalOpen(true);
@@ -41,7 +40,6 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-
 
     const generateChatId = (user1: string, user2: string): string => {
         return [user1, user2].sort().join('_');
@@ -53,7 +51,10 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
             const friendDetails = await fetchUserDetails(friend.id);
             
             if (friendDetails) {
+                console.log(`Navigating to chat with ID: ${chatId}`);
                 navigate(`/chat/${chatId}`, { state: { friend: friendDetails } });
+            } else {
+                console.error("Friend details not found");
             }
         }
     };
@@ -61,11 +62,11 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
     const handleSignOut = async () => {
         await logOut();
         navigate('/');
-        console.log(currentUser?.displayName)
+        console.log(currentUser?.displayName);
+    };
 
     const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        event.currentTarget.src = 'default.jpg'; // Fallback image in case of an error
-
+        event.currentTarget.src = 'default.jpg';
     };
 
     useEffect(() => {
@@ -95,6 +96,10 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         };
     }, []);
 
+    useEffect(() => {
+        console.log("User list in Navbar:", userList);
+    }, [userList]);
+
     return (
         <div className="container">
             <nav className="sidebar">
@@ -108,18 +113,14 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
                 <div className="scrollable-box hide-scrollbar" ref={scrollableBoxRef}>
                     <div className="user-list-container">
                         {userList.map(user => (
-
                             <div
                                 className="user-list-item"
                                 key={user.id}
                                 onClick={() => startChat(user)}
                             >
-                          <a href={`/profile/${user.id}`} className="user-list-item" key={user.id}>
                                 <img src={user.image} alt={user.firstName} className="user-list-image" onError={handleError} />
                                 <span className="user-list-name">{user.firstName + ' ' + user.lastName}</span>
-                            </a>
                             </div>
-
                         ))}
                     </div>
                 </div>
