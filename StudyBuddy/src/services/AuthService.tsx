@@ -1,5 +1,5 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, db, storage } from "../config/Firebase";
 import { handleError } from "../utils/errorHandler";
@@ -12,6 +12,8 @@ interface AdditionalUserInfo {
   major: string;
   year: string;
   profilePic: File | null;
+  profilePicUrl?: string;
+  friends?: string[];
 }
 
 export const signUp = async (email: string, password: string, additionalInfo: AdditionalUserInfo) => {
@@ -40,6 +42,7 @@ export const signUp = async (email: string, password: string, additionalInfo: Ad
       major: additionalInfo.major,
       year: additionalInfo.year,
       profilePicUrl,
+      friends: additionalInfo.friends || [],
     });
 
     return user;
@@ -56,6 +59,37 @@ export const logIn = async (email: string, password: string) => {
     throw handleError(error);
   }
 };
+
+export const fetchUserInfo = async (uid: string): Promise<AdditionalUserInfo | null> => {
+  try {
+    const userDoc = await getDoc(doc(db, 'Users', uid));
+    if (userDoc.exists()) {
+      return userDoc.data() as AdditionalUserInfo;
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    return null;
+  }
+};
+
+export const fetchUserDetails = async (uid: string): Promise<{ id: string, name: string, image: string } | null> => {
+  try {
+    const userDoc = await getDoc(doc(db, 'Users', uid));
+    if (userDoc.exists()) {
+      const data = userDoc.data() as AdditionalUserInfo;
+      return { id: uid, name: `${data.firstName} ${data.lastName}`, image: data.profilePicUrl || 'default.jpg' };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    return null;
+  }
+};
+
 
 export const logOut = async () => {
   try {

@@ -1,53 +1,80 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import './App.css';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import Navbar from './components/Navbar/Navbar';
 import MainLayout from './components/MainLayout/MainLayout';
 import profilePic from './assets/react.svg';
+import { fetchUserDetails, fetchUserInfo } from './services/AuthService';
 import './App.css';
 import UsersPage from './pages/UsersPage';
 import ChatPage from './pages/ChatPage';
 
-const userList = [
-  { id: 1, name: 'Jane Doe', image: profilePic },
-  { id: 2, name: 'John Smith', image: profilePic },
-  { id: 3, name: 'Alice Johnson', image: profilePic }
-];
-
 const App = () => {
   const location = useLocation();
+  const { currentUser } = useAuth();
+  const [displayName, setDisplayName] = useState('Guest');
+  const [userList, setUserList] = useState<{ id: string, name: string, image: string }[]>([]);
+
   const showNavbar = location.pathname !== '/signup' && location.pathname !== '/login' && location.pathname !== '/';
 
+  useEffect(() => {
+    const getUserInfo = async () => {
+      if (currentUser) {
+        const userInfo = await fetchUserInfo(currentUser.uid);
+        if (userInfo) {
+          setDisplayName(`${userInfo.firstName} ${userInfo.lastName}`);
+          if (userInfo.friends && userInfo.friends.length > 0) {
+            const friendsList = await Promise.all(
+              userInfo.friends.map(async (friendUid: string) => {
+                const friendDetails = await fetchUserDetails(friendUid);
+                return friendDetails;
+              })
+            );
+            setUserList(friendsList.filter(Boolean) as { id: string, name: string, image: string }[]);
+          }
+        }
+      }
+    };
+    getUserInfo();
+  }, [currentUser]);
+
   return (
-    <AuthProvider>
-      <div className="app-container">
-        {showNavbar && <Navbar userImage={profilePic} userName="John Doe" userList={userList} />}
-        <div className={showNavbar ? 'main-content' : 'full-width'}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/signup" element={<SignUpPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            {showNavbar && (
-              <Route path="/*" element={<MainLayout />}>
-                <>
-                <Route path="users" element={<UsersPage />} />
-                <Route path="chat/:chatId" element={<ChatPage />} />
-                </>
-              </Route>
-            )}
-          </Routes>
-        </div>
-      </div>
-    </AuthProvider>
+<div className="container">
+  {showNavbar && (
+    <Navbar
+      userImage={profilePic}
+      userName={displayName}
+      userList={userList}
+    />
+  )}
+  <div className={showNavbar ? 'main-content' : 'full-width'}>
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      {showNavbar && (
+        <Route path="/*" element={<MainLayout />}>
+          <>
+            <Route path="users" element={<UsersPage />} />
+            <Route path="chat/:chatId" element={<ChatPage />} />
+          </>
+        </Route>
+      )}
+    </Routes>
+  </div>
+</div>
   );
-}
+};
 
 const AppWithRouter = () => (
   <Router>
-    <App />
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </Router>
 );
 
