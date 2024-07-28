@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import ChatPage from '../../pages/ChatPage';
 import UsersPage from '../../pages/UsersPage';
-import './MainLayout.css'
+import './MainLayout.css';
 
 const MainLayout: React.FC = () => {
   return (

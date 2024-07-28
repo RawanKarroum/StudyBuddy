@@ -1,5 +1,6 @@
-.main-layout {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
+.main-content {
+  padding: 20px;
+  overflow-y: auto; /* Allows scrolling within the main content */
+  height: 100%;
+  box-sizing: border-box;
+}
