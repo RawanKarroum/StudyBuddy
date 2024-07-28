@@ -28,13 +28,24 @@ interface AdditionalUserInfo {
   friends?: string[];
 }
 
+export const getProfilePicUrl = async (filePath: string) => {
+  try {
+    const fileRef = ref(storage, filePath);
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (error) {
+    console.error("Error getting download URL:", error);
+    return 'default.jpg'; 
+  }
+};
+
 export const signUp = async (email: string, password: string, additionalInfo: AdditionalUserInfo) => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
     // Default profile picture URL
-    let profilePicUrl = 'default.jpg';
+    let profilePicUrl = await getProfilePicUrl('default.jpg');
 
     // Upload profile picture if provided
     if (additionalInfo.profilePic) {
@@ -42,6 +53,8 @@ export const signUp = async (email: string, password: string, additionalInfo: Ad
       await uploadBytes(profilePicRef, additionalInfo.profilePic);
       profilePicUrl = await getDownloadURL(profilePicRef);
     }
+
+    console.log('Profile Pic URL:', profilePicUrl);
 
     // Save user information to Firestore
     await setDoc(doc(db, 'Users', user.uid), {

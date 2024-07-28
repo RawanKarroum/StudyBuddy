@@ -42,6 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         setIsModalOpen(false);
     };
 
+
     const generateChatId = (user1: string, user2: string): string => {
         return [user1, user2].sort().join('_');
     };
@@ -61,6 +62,10 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         await logOut();
         navigate('/');
         console.log(currentUser?.displayName)
+
+    const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+        event.currentTarget.src = 'default.jpg'; // Fallback image in case of an error
+
     };
 
     useEffect(() => {
@@ -94,7 +99,7 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
         <div className="container">
             <nav className="sidebar">
                 <div className="user-info">
-                    <img src={userImage} alt="User" className="user-image" />
+                    <img src={userImage} alt="User" className="user-image" onError={handleError} />
                     <div className="user-details">
                         <span className="user-name">{userName}</span>
                         <button className="view-profile" onClick={handleOpenModal}>View Profile</button>
@@ -103,14 +108,18 @@ const Navbar: React.FC<NavbarProps> = ({ userImage, userName, userList }) => {
                 <div className="scrollable-box hide-scrollbar" ref={scrollableBoxRef}>
                     <div className="user-list-container">
                         {userList.map(user => (
+
                             <div
                                 className="user-list-item"
                                 key={user.id}
                                 onClick={() => startChat(user)}
                             >
-                                <img src={user.image} alt={user.firstName} className="user-list-image" />
+                          <a href={`/profile/${user.id}`} className="user-list-item" key={user.id}>
+                                <img src={user.image} alt={user.firstName} className="user-list-image" onError={handleError} />
                                 <span className="user-list-name">{user.firstName + ' ' + user.lastName}</span>
+                            </a>
                             </div>
+
                         ))}
                     </div>
                 </div>
